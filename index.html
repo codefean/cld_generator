@@ -6,15 +6,13 @@
 <title>Causal Loop Diagram Generator</title>
 <meta name="description" content="Generate causal loop diagrams from a simple text format. Detects reinforcing and balancing feedback loops. Exports to .rda, .csv, and plain text." />
 
-<!-- Fonts -->
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
 
-<!-- Tailwind for utility classes (no build step) -->
 <script src="https://cdn.tailwindcss.com/3.4.1"></script>
 
-<!-- React + Babel + D3 + Lucide via CDN, all pinned -->
 <script crossorigin src="https://unpkg.com/react@18.3.1/umd/react.production.min.js"></script>
 <script crossorigin src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js"></script>
 <script src="https://unpkg.com/@babel/standalone@7.24.7/babel.min.js"></script>
@@ -70,9 +68,6 @@ function Icon({ name, size = 14, color, strokeWidth = 2, className = "" }) {
   return <span ref={ref} className={"inline-flex items-center justify-center " + className} style={{ width: size, height: size }} />;
 }
 
-// ================================================================
-// Parsing
-// ================================================================
 function parseConnections(text) {
   const lines = text.split("\n").map((l) => l.trim()).filter(Boolean);
   const edges = [];
@@ -108,9 +103,6 @@ function parseConnections(text) {
   return { edges, errors };
 }
 
-// ================================================================
-// Loop detection
-// ================================================================
 function findLoops(edges) {
   const adj = new Map();
   edges.forEach((e) => {
@@ -162,11 +154,6 @@ function findLoops(edges) {
   return cycles.filter((c) => c.nodes.length <= 8);
 }
 
-// ================================================================
-// .rda binary writer (RData v2, XDR/big-endian, uncompressed)
-// Encodes a data.frame with three character columns: from, to, polarity
-// Verified against R's load() — round-trips correctly with UTF-8.
-// ================================================================
 function writeRDA(edges) {
   const chunks = [];
   let totalLen = 0;
@@ -237,9 +224,6 @@ function writeRDA(edges) {
   return out;
 }
 
-// ================================================================
-// Text export
-// ================================================================
 function buildLoopReport(edges, loops) {
   const nodes = new Set();
   edges.forEach((e) => { nodes.add(e.source); nodes.add(e.target); });
@@ -294,9 +278,6 @@ function buildLoopsOnly(loops) {
   return out.join("\n").trimEnd();
 }
 
-// ================================================================
-// Diagram
-// ================================================================
 function CLDDiagram({ edges }) {
   const svgRef = useRef(null);
   const wrapperRef = useRef(null);
@@ -361,7 +342,6 @@ function CLDDiagram({ edges }) {
       }
     });
 
-    // Mobile gets tighter forces so things fit
     const linkDist = isMobile ? 130 : 170;
     const charge = isMobile ? -520 : -720;
     const collide = isMobile ? 56 : 72;
@@ -532,9 +512,7 @@ function CLDDiagram({ edges }) {
   );
 }
 
-// ================================================================
-// Main
-// ================================================================
+
 const EXAMPLES = {
   "Population": `# Reinforcing growth + balancing carrying capacity
 Population -> Births +
@@ -807,7 +785,7 @@ function CLDGenerator() {
         <footer className="mt-16 pt-6 border-t border-stone-200 text-xs text-stone-400 flex flex-wrap items-center gap-x-4 gap-y-1">
           <span>Causal Loop Diagram Generator</span>
           <span className="text-stone-300">·</span>
-          <span>Built with React &amp; D3</span>
+          <span>Built by Sean Fagan</span>
         </footer>
       </div>
     </div>
